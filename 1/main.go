@@ -4,7 +4,6 @@ import "fmt"
 
 type Human struct {
 	Name  string
-	Age   int
 	Email string
 }
 
@@ -12,17 +11,12 @@ func (h *Human) GetName() string {
 	return h.Name
 }
 
-func (h *Human) GetAge() int {
-	return h.Age
-}
-
 func (h *Human) GetEmail() string {
 	return h.Email
 }
 
 type Action struct {
-	Name  string
-	Email string
+	Name string
 	Human
 }
 
@@ -31,10 +25,8 @@ func (a *Action) GetName() string {
 }
 
 func main() {
-	// создаём экземпляр структуры Action, который наследует Human
 	action := Action{
-		Name:  "Andrew",
-		Email: "andrew@gmail.com",
+		Name: "Andrew",
 		Human: Human{
 			Name:  "Gabriel",
 			Email: "gabriel@gmail.com",
@@ -54,7 +46,7 @@ func main() {
 	//* Вызовы методов
 
 	// структура Action имеет доступ к методам встроенной структуры Human. Данное свойство часто применяется в композиции
-	fmt.Printf("Action's name: %s\n", action.GetEmail()) // Andrew
+	fmt.Printf("Action's email: %s\n", action.GetEmail()) // gabriel@gmail.com
 
 	// если есть методы с одинаковыми названиям, то приорите отдается методу из структуры выше.
 	fmt.Printf("Action's name: %s\n", action.GetName()) // Andrew
