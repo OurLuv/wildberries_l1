@@ -6,7 +6,9 @@ import (
 )
 
 func main() {
+	// создаём big.Int
 	a := new(big.Int)
+	// даём переменной значение, вызвав метод SetString() и указав систему счисления (10)
 	if _, ok := a.SetString("480000000000000000000000", 10); !ok {
 		panic("can't create a number")
 	}
