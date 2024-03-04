@@ -12,6 +12,9 @@ type CMap[V any] struct {
 }
 
 func (cm *CMap[V]) Get(key string) (V, bool) {
+	// rlock создаёт блокировку только для чтения
+	// несколько потоков могут одновременно читать данные,
+	// но только один поток может иметь блокировку на запись
 	cm.RLock()
 	defer cm.RUnlock()
 	v, ok := cm.Data[key]
@@ -19,6 +22,7 @@ func (cm *CMap[V]) Get(key string) (V, bool) {
 }
 
 func (cm *CMap[V]) Set(key string, value V) {
+	// lock - только одна горутина может читать/записывать
 	cm.Lock()
 	defer cm.Unlock()
 	cm.Data[key] = value
@@ -46,7 +50,6 @@ func NewCMap[V any]() CMap[V] {
 func main() {
 	balance := NewCMap[int]()
 	wg := sync.WaitGroup{}
-	mp := make(map[string]int)
 	for i := 0; i < 100; i++ {
 		wg.Add(1)
 		go func(index int) {
@@ -56,17 +59,8 @@ func main() {
 			balance.Set(key, value)
 		}(i)
 	}
-	for i := 0; i < 100; i++ {
-		wg.Add(1)
-		go func(index int) {
-			defer wg.Done()
-			key := strconv.Itoa(index)
-			value := index * 2
-			mp[key] = value
-		}(i)
-	}
 	wg.Wait()
-	for k, v := range mp {
+	for k, v := range balance.Data {
 		fmt.Printf("%s: %d\n", k, v)
 	}
 
